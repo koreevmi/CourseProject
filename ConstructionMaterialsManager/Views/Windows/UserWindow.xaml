@@ -1,0 +1,52 @@
+﻿<Window x:Class="ConstructionMaterialsManager.Views.Windows.UserWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Пользователь" Icon="/icon.png" WindowStartupLocation="CenterScreen" Height="350" Width="400">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Заголовок -->
+        <Border Grid.Row="0" Grid.ColumnSpan="2" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" Padding="8" Margin="0,0,0,10">
+            <Label Content="👤 Информация о пользователе" FontSize="16" FontWeight="Bold"/>
+        </Border>
+
+        <!-- Поля ввода -->
+        <Label Grid.Row="1" Grid.Column="0" Content="Логин:" Margin="0,0,5,0" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="1" Grid.Column="1" x:Name="LoginTextBox" Margin="0,0,0,10" Padding="5"/>
+
+        <Label Grid.Row="2" Grid.Column="0" Content="Пароль:" Margin="0,0,5,0" VerticalAlignment="Center"/>
+        <PasswordBox Grid.Row="2" Grid.Column="1" x:Name="PasswordBox" Margin="0,0,0,10" Padding="5"/>
+
+        <Label Grid.Row="3" Grid.Column="0" Content="ФИО:" Margin="0,0,5,0" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="3" Grid.Column="1" x:Name="FullNameTextBox" Margin="0,0,0,10" Padding="5"/>
+
+        <Label Grid.Row="4" Grid.Column="0" Content="Email:" Margin="0,0,5,0" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="4" Grid.Column="1" x:Name="EmailTextBox" Margin="0,0,0,10" Padding="5"/>
+
+        <Label Grid.Row="5" Grid.Column="0" Content="Роль:" Margin="0,0,5,0" VerticalAlignment="Center"/>
+        <ComboBox Grid.Row="5" Grid.Column="1" x:Name="RoleComboBox" Margin="0,0,0,10" Padding="5">
+            <ComboBoxItem>Администратор</ComboBoxItem>
+            <ComboBoxItem>Инжинер</ComboBoxItem>
+            <ComboBoxItem>Гость</ComboBoxItem>
+        </ComboBox>
+
+        <!-- Кнопки -->
+        <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button x:Name="CancelBtn" Content="Отмена" Click="CancelBtn_Click" Width="100" Margin="0,0,10,0" Padding="8,4" Background="#F5F5F5" Foreground="Black"/>
+            <Button x:Name="SaveBtn" Content="Сохранить" Click="SaveBtn_Click" Width="100" Padding="8,4" Background="#4361EE" Foreground="White"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,57 @@
+﻿<UserControl x:Class="ConstructionMaterialsManager.Views.Pages.ProjectsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Toolbar -->
+        <Border Grid.Row="0" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" Padding="5" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="AddProjectBtn" Content="➕ Добавить" ToolTip="Добавить проект" Click="AddProjectBtn_Click"
+                        Margin="0,0,10,0" Padding="10,5" Background="#4361EE" Foreground="White"/>
+                <Button x:Name="EditProjectBtn" Content="✏️ Редактировать" ToolTip="Редактировать проект" Click="EditProjectBtn_Click"
+                        Margin="0,0,10,0" Padding="10,5" Background="#4361EE" Foreground="White"/>
+                <Button x:Name="DeleteProjectBtn" Content="🗑️ Удалить" ToolTip="Удалить проект" Click="DeleteProjectBtn_Click"
+                        Margin="0,0,10,0" Padding="10,5" Background="#4361EE" Foreground="White"/>
+                <Button x:Name="ViewMaterialsBtn" Content="📋 Материалы" ToolTip="Материалы проекта" Click="ViewMaterialsBtn_Click"
+                        Padding="10,5" Background="#4361EE" Foreground="White"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Filters -->
+        <Border Grid.Row="1" BorderBrush="#E0E0E0" BorderThickness="1" Padding="10" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal">
+                <Grid>
+                    <TextBox x:Name="ProjectFilterTextBox" Width="250" TextChanged="ProjectFilterTextBox_TextChanged" Margin="0,0,10,0"/>
+                    <TextBlock x:Name="ProjectFilterWatermark" Text="🔍 Поиск по названию..." Margin="5,0,0,0"
+                               Foreground="#888" VerticalAlignment="Center" IsHitTestVisible="False"/>
+                </Grid>
+                <ComboBox x:Name="ProjectStatusFilter" Width="200" Margin="0,0,10,0" SelectionChanged="ProjectStatusFilter_SelectionChanged">
+                    <ComboBoxItem Content="📋 Все статусы" Tag="" IsSelected="True"/>
+                    <ComboBoxItem Content="📝 Запланирован" Tag="Planned"/>
+                    <ComboBoxItem Content="🔄 В процессе" Tag="In Progress"/>
+                    <ComboBoxItem Content="✅ Завершен" Tag="Completed"/>
+                    <ComboBoxItem Content="❌ Отменен" Tag="Cancelled"/>
+                </ComboBox>
+            </StackPanel>
+        </Border>
+
+        <!-- DataGrid -->
+        <Border Grid.Row="2" BorderBrush="#E0E0E0" BorderThickness="1">
+            <DataGrid x:Name="ProjectsDataGrid" AutoGenerateColumns="False" CanUserAddRows="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
+                    <DataGridTextColumn Header="Описание" Binding="{Binding Description}" Width="*"/>
+                    <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate, StringFormat=dd.MM.yyyy}" Width="Auto"/>
+                    <DataGridTextColumn Header="Дата окончания" Binding="{Binding EndDate, StringFormat=dd.MM.yyyy}" Width="Auto"/>
+                    <DataGridTextColumn Header="Бюджет" Binding="{Binding Budget, StringFormat={}{0:N2} руб.}" Width="Auto"/>
+                    <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="Auto"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </Grid>
+</UserControl>
