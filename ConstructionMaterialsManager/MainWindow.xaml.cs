@@ -13,6 +13,14 @@ namespace ConstructionMaterialsManager.Views.Windows
             InitializeComponent();
             _serviceProvider = serviceProvider;
             UpdateUI();
+            Loaded += MainWindow_Loaded;
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Загружаем MaterialsPage по умолчанию
+            var materialsPage = _serviceProvider.GetRequiredService<MaterialsPage>();
+            MainFrame.Content = materialsPage;
         }
 
         private void UpdateUI()

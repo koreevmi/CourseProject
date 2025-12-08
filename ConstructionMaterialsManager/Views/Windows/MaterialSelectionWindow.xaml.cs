@@ -1,5 +1,7 @@
-﻿using ConstructionMaterialsManager.Models;
+﻿using ConstructionMaterialsManager.Data;
+using ConstructionMaterialsManager.Models;
 using ConstructionMaterialsManager.Services;
+using Microsoft.EntityFrameworkCore;
 using System.Windows;
 
 namespace ConstructionMaterialsManager.Views.Windows
@@ -12,13 +14,18 @@ namespace ConstructionMaterialsManager.Views.Windows
         public MaterialSelectionWindow(IDatabaseService databaseService)
         {
             InitializeComponent();
-            _databaseService = databaseService;
+            _databaseService = databaseService ?? throw new ArgumentNullException(nameof(databaseService));
+            LoadMaterials();
         }
 
         public void SetProject(int projectId)
         {
+            if (projectId <= 0)
+            {
+                throw new ArgumentException("ProjectId должен быть больше нуля.", nameof(projectId));
+            }
+
             _projectId = projectId;
-            LoadMaterials();
         }
 
         private void LoadMaterials()
@@ -28,24 +35,39 @@ namespace ConstructionMaterialsManager.Views.Windows
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            var selectedMaterial = MaterialsDataGrid.SelectedItem as Material;
-            if (selectedMaterial != null && decimal.TryParse(QuantityTextBox.Text, out decimal quantity) && quantity > 0)
+            try
             {
-                var projectMaterial = new ProjectMaterial
+                var selectedMaterial = MaterialsDataGrid.SelectedItem as Material;
+                if (selectedMaterial != null && decimal.TryParse(QuantityTextBox.Text, out decimal quantity))
                 {
-                    ProjectId = _projectId,
-                    MaterialId = selectedMaterial.MaterialId,
-                    PlannedQuantity = quantity,
-                    UsedQuantity = 0
-                };
+                    var projectMaterial = new ProjectMaterial
+                    {
+                        ProjectId = _projectId,
+                        MaterialId = selectedMaterial.MaterialId,
+                        PlannedQuantity = quantity,
+                        UsedQuantity = 0
+                    };
 
-                _databaseService.AddProjectMaterial(projectMaterial);
-                DialogResult = true;
-                Close();
+                    _databaseService.AddProjectMaterial(projectMaterial);
+                    DialogResult = true;
+                    Close();
+                }
+                else
+                {
+                    MessageBox.Show("Выберите материал для добавления и укажите количество.");
+                }
             }
-            else
+            catch (InvalidOperationException ex)
             {
-                MessageBox.Show("Выберите материал и укажите корректное количество.");
+                MessageBox.Show(ex.Message);
+            }
+            catch (DbUpdateException dbEx)
+            {
+                MessageBox.Show($"Ошибка при добавлении материала: {dbEx.InnerException?.Message}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при добавлении материала: {ex.Message}");
             }
         }
 

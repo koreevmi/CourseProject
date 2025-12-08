@@ -1,6 +1,7 @@
 ﻿using ConstructionMaterialsManager.Models;
 using ConstructionMaterialsManager.Services;
 using ConstructionMaterialsManager.Views.Windows;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -164,10 +165,13 @@ namespace ConstructionMaterialsManager.Views.Pages
                     LoadProjects();
                 }
             }
+            catch (DbUpdateException dbEx)
+            {
+                MessageBox.Show($"Ошибка при добавлении проекта: {dbEx.InnerException?.Message}");
+            }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при добавлении проекта: {ex.Message}", "Ошибка",
-                               MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка при добавлении проекта: {ex.Message}");
             }
         }
 
@@ -190,10 +194,13 @@ namespace ConstructionMaterialsManager.Views.Pages
                     MessageBox.Show("Выберите проект для редактирования.");
                 }
             }
+            catch (DbUpdateException dbEx)
+            {
+                MessageBox.Show($"Ошибка при редактировании проекта: {dbEx.InnerException?.Message}");
+            }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при редактировании проекта: {ex.Message}", "Ошибка",
-                               MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка при редактировании проекта: {ex.Message}");
             }
         }
 
@@ -214,6 +221,7 @@ namespace ConstructionMaterialsManager.Views.Pages
                         "Подтверждение", MessageBoxButton.YesNo);
                     if (result == MessageBoxResult.Yes)
                     {
+                        // Передаем ProjectId типа int
                         _databaseService.DeleteProject(selectedProject.ProjectId);
                         LoadProjects();
                     }
@@ -235,10 +243,10 @@ namespace ConstructionMaterialsManager.Views.Pages
             try
             {
                 var selectedProject = ProjectsDataGrid.SelectedItem as Project;
-                if (selectedProject != null)
+                if (selectedProject != null && selectedProject.ProjectId > 0)
                 {
                     var projectMaterialsWindow = _serviceProvider.GetRequiredService<ProjectMaterialsWindow>();
-                    projectMaterialsWindow.SetProject(selectedProject);
+                    projectMaterialsWindow.SetProject(selectedProject.ProjectId);
                     projectMaterialsWindow.ShowDialog();
                 }
                 else

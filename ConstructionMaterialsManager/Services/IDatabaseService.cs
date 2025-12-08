@@ -31,5 +31,6 @@ namespace ConstructionMaterialsManager.Services
         void AddMaterialMovement(MaterialMovement movement);
         void AddProjectMaterial(ProjectMaterial projectMaterial);
         void RemoveProjectMaterial(int projectMaterialId);
+
     }
 }

@@ -21,7 +21,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
                     <DataGridTextColumn Header="Ед. изм." Binding="{Binding Unit}" Width="Auto"/>
-                    <DataGridTextColumn Header="Стоимость за ед." Binding="{Binding CostPerUnit, StringFormat=c}" Width="Auto"/>
+                    <DataGridTextColumn Header="Стоимость за ед." Binding="{Binding CostPerUnit, StringFormat={}{0:N2} руб.}" Width="Auto"/>
                     <DataGridTextColumn Header="Текущий запас" Binding="{Binding CurrentStock}" Width="Auto"/>
                 </DataGrid.Columns>
             </DataGrid>

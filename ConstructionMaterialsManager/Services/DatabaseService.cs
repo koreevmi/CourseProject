@@ -124,36 +124,119 @@ namespace ConstructionMaterialsManager.Services
 
         public void AddProject(Project project)
         {
-            _context.Projects.Add(project);
-            _context.SaveChanges();
-        }
-
-        public void UpdateProject(Project project)
-        {
-            _context.Projects.Update(project);
-            _context.SaveChanges();
-        }
-
-        public void DeleteProject(int projectId)
-        {
-            var project = _context.Projects.Find(projectId);
-            if (project != null)
+            using (var context = new ApplicationDbContext())
             {
-                _context.Projects.Remove(project);
-                _context.SaveChanges();
+                context.Projects.Add(project);
+                context.SaveChanges();
             }
         }
 
+        public void UpdateProjectMaterial(ProjectMaterial projectMaterial)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                if (projectMaterial.UsedQuantity > projectMaterial.PlannedQuantity)
+                {
+                    throw new InvalidOperationException("Использованное количество не может быть больше запланированного.");
+                }
+
+                context.Entry(projectMaterial).State = EntityState.Modified;
+                context.SaveChanges();
+            }
+        }
+
+
+        public void DeleteProject(int projectId)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var project = context.Projects.Include(p => p.ProjectMaterials).FirstOrDefault(p => p.ProjectId == projectId);
+                if (project != null)
+                {
+                    // Удаление связанных материалов проекта
+                    context.ProjectMaterials.RemoveRange(project.ProjectMaterials);
+                    // Удаление проекта
+                    context.Projects.Remove(project);
+                    context.SaveChanges();
+                }
+            }
+        }
+
+
         public void AddDelivery(Delivery delivery)
         {
-            _context.Deliveries.Add(delivery);
-            _context.SaveChanges();
+            using (var context = new ApplicationDbContext())
+            {
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var materialExists = context.Materials.Any(m => m.MaterialId == delivery.MaterialId);
+                        if (!materialExists)
+                        {
+                            throw new InvalidOperationException($"Материал с ID {delivery.MaterialId} не найден.");
+                        }
+
+                        var supplierExists = context.Suppliers.Any(s => s.SupplierId == delivery.SupplierId);
+                        if (!supplierExists)
+                        {
+                            throw new InvalidOperationException($"Поставщик с ID {delivery.SupplierId} не найден.");
+                        }
+
+                        if (delivery.Quantity <= 0)
+                        {
+                            throw new InvalidOperationException("Количество должно быть больше нуля.");
+                        }
+
+                        context.Deliveries.Add(delivery);
+                        context.SaveChanges();
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
         }
 
         public void UpdateDelivery(Delivery delivery)
         {
-            _context.Deliveries.Update(delivery);
-            _context.SaveChanges();
+            using (var context = new ApplicationDbContext())
+            {
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var materialExists = context.Materials.Any(m => m.MaterialId == delivery.MaterialId);
+                        if (!materialExists)
+                        {
+                            throw new InvalidOperationException($"Материал с ID {delivery.MaterialId} не найден.");
+                        }
+
+                        var supplierExists = context.Suppliers.Any(s => s.SupplierId == delivery.SupplierId);
+                        if (!supplierExists)
+                        {
+                            throw new InvalidOperationException($"Поставщик с ID {delivery.SupplierId} не найден.");
+                        }
+
+                        if (delivery.Quantity <= 0)
+                        {
+                            throw new InvalidOperationException("Количество должно быть больше нуля.");
+                        }
+
+                        context.Entry(delivery).State = EntityState.Modified;
+                        context.SaveChanges();
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
         }
 
         public void DeleteDelivery(int deliveryId)
@@ -168,23 +251,82 @@ namespace ConstructionMaterialsManager.Services
 
         public void AddMaterialMovement(MaterialMovement movement)
         {
-            _context.MaterialMovements.Add(movement);
-            _context.SaveChanges();
+            using (var context = new ApplicationDbContext())
+            {
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var materialExists = context.Materials.Any(m => m.MaterialId == movement.MaterialId);
+                        if (!materialExists)
+                        {
+                            throw new InvalidOperationException($"Материал с ID {movement.MaterialId} не найден.");
+                        }
+
+                        if (movement.Quantity <= 0)
+                        {
+                            throw new InvalidOperationException("Количество должно быть больше нуля.");
+                        }
+
+                        context.MaterialMovements.Add(movement);
+                        context.SaveChanges();
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
         }
 
         public void AddProjectMaterial(ProjectMaterial projectMaterial)
         {
-            _context.ProjectMaterials.Add(projectMaterial);
-            _context.SaveChanges();
+            using (var context = new ApplicationDbContext())
+            {
+                var projectExists = context.Projects.Any(p => p.ProjectId == projectMaterial.ProjectId);
+                if (!projectExists)
+                {
+                    throw new InvalidOperationException($"Проект с ID {projectMaterial.ProjectId} не найден.");
+                }
+
+                var materialExists = context.Materials.Any(m => m.MaterialId == projectMaterial.MaterialId);
+                if (!materialExists)
+                {
+                    throw new InvalidOperationException($"Материал с ID {projectMaterial.MaterialId} не найден.");
+                }
+
+                if (projectMaterial.UsedQuantity > projectMaterial.PlannedQuantity)
+                {
+                    throw new InvalidOperationException("Использованное количество не может быть больше запланированного.");
+                }
+
+                context.ProjectMaterials.Add(projectMaterial);
+                context.SaveChanges();
+            }
         }
+
 
         public void RemoveProjectMaterial(int projectMaterialId)
         {
-            var projectMaterial = _context.ProjectMaterials.Find(projectMaterialId);
-            if (projectMaterial != null)
+            using (var context = new ApplicationDbContext())
             {
-                _context.ProjectMaterials.Remove(projectMaterial);
-                _context.SaveChanges();
+                var projectMaterial = context.ProjectMaterials.Find(projectMaterialId);
+                if (projectMaterial != null)
+                {
+                    context.ProjectMaterials.Remove(projectMaterial);
+                    context.SaveChanges();
+                }
+            }
+        }
+
+        public void UpdateProject(Project project)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                context.Entry(project).State = EntityState.Modified;
+                context.SaveChanges();
             }
         }
     }

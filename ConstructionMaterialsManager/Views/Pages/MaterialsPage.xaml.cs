@@ -53,7 +53,6 @@ namespace ConstructionMaterialsManager.Views.Pages
             }
             catch
             {
-                // Игнорируем ошибки обновления UI
             }
         }
 
@@ -86,7 +85,6 @@ namespace ConstructionMaterialsManager.Views.Pages
                 _suppliers.Clear();
                 var suppliers = _databaseService.GetSuppliers() ?? new List<Supplier>();
 
-                // Добавляем элемент "Все поставщики"
                 _suppliers.Add(new Supplier { SupplierId = -1, Name = "📋 Все поставщики" });
 
                 foreach (var supplier in suppliers)
@@ -97,7 +95,6 @@ namespace ConstructionMaterialsManager.Views.Pages
                     }
                 }
 
-                // Устанавливаем выбранным элемент "Все поставщики"
                 if (_suppliers.Count > 0)
                 {
                     SupplierFilter.SelectedIndex = 0;
@@ -120,7 +117,6 @@ namespace ConstructionMaterialsManager.Views.Pages
             }
             catch
             {
-                // Игнорируем ошибки при изменении текста фильтра
             }
         }
 
@@ -132,7 +128,6 @@ namespace ConstructionMaterialsManager.Views.Pages
             }
             catch
             {
-                // Игнорируем ошибки при изменении фильтра поставщиков
             }
         }
 
@@ -140,14 +135,12 @@ namespace ConstructionMaterialsManager.Views.Pages
         {
             try
             {
-                // Если нет загруженных материалов, выходим
                 if (_allMaterials == null || _allMaterials.Count == 0)
                 {
                     _materials.Clear();
                     return;
                 }
 
-                // Фильтруем по тексту
                 var filteredMaterials = _allMaterials.AsQueryable();
 
                 if (!string.IsNullOrEmpty(MaterialFilterTextBox.Text))
@@ -158,7 +151,6 @@ namespace ConstructionMaterialsManager.Views.Pages
                         m.Name.ToLower().Contains(filterText));
                 }
 
-                // Фильтруем по поставщику
                 if (SupplierFilter.SelectedItem is Supplier selectedSupplier &&
                     selectedSupplier.SupplierId != -1)
                 {
@@ -166,7 +158,6 @@ namespace ConstructionMaterialsManager.Views.Pages
                         m != null && m.SupplierId == selectedSupplier.SupplierId);
                 }
 
-                // Обновляем список
                 _materials.Clear();
                 foreach (var material in filteredMaterials.ToList())
                 {

@@ -32,10 +32,10 @@
                 </Grid>
                 <ComboBox x:Name="ProjectStatusFilter" Width="200" Margin="0,0,10,0" SelectionChanged="ProjectStatusFilter_SelectionChanged">
                     <ComboBoxItem Content="📋 Все статусы" Tag="" IsSelected="True"/>
-                    <ComboBoxItem Content="📝 Запланирован" Tag="Planned"/>
-                    <ComboBoxItem Content="🔄 В процессе" Tag="In Progress"/>
-                    <ComboBoxItem Content="✅ Завершен" Tag="Completed"/>
-                    <ComboBoxItem Content="❌ Отменен" Tag="Cancelled"/>
+                    <ComboBoxItem Content="📝 Запланирован" Tag="Запланирован"/>
+                    <ComboBoxItem Content="🔄 В процессе" Tag="В процессе"/>
+                    <ComboBoxItem Content="✅ Завершен" Tag="Завершен"/>
+                    <ComboBoxItem Content="❌ Отменен" Tag="Отменен"/>
                 </ComboBox>
             </StackPanel>
         </Border>
